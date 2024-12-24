@@ -1,4 +1,4 @@
-use crate::Vector3;
+use super::Vector3;
 use core::f64;
 use std::ops;
 
@@ -6,9 +6,7 @@ impl ops::Neg for Vector3 {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        Vector3 {
-            e: [-self.x(), -self.y(), -self.z()],
-        }
+        Vector3::new(-self.x(), -self.y(), -self.z())
     }
 }
 
@@ -28,17 +26,13 @@ impl ops::IndexMut<usize> for Vector3 {
 
 impl ops::AddAssign for Vector3 {
     fn add_assign(&mut self, rhs: Self) {
-        *self = Self {
-            e: [self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z()],
-        }
+        *self = Vector3::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z())
     }
 }
 
 impl ops::MulAssign<f64> for Vector3 {
     fn mul_assign(&mut self, rhs: f64) {
-        *self = Self {
-            e: [self.x() * rhs, self.y() * rhs, self.z() * rhs],
-        }
+        *self = Vector3::new(self.x() * rhs, self.y() * rhs, self.z() * rhs)
     }
 }
 
@@ -52,9 +46,7 @@ impl ops::Add for Vector3 {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Self {
-            e: [self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z()],
-        }
+        Vector3::new(self.x() + rhs.x(), self.y() + rhs.y(), self.z() + rhs.z())
     }
 }
 
@@ -62,9 +54,7 @@ impl ops::Sub for Vector3 {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Self {
-            e: [self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z()],
-        }
+        Vector3::new(self.x() - rhs.x(), self.y() - rhs.y(), self.z() - rhs.z())
     }
 }
 
@@ -72,9 +62,7 @@ impl ops::Mul for Vector3 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Self {
-            e: [self.x() * rhs.x(), self.y() * self.y(), self.z() * rhs.z()],
-        }
+        Vector3::new(self.x() * rhs.x(), self.y() * self.y(), self.z() * rhs.z())
     }
 }
 
@@ -82,9 +70,7 @@ impl ops::Mul<f64> for Vector3 {
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self::Output {
-        Self {
-            e: [self.x() * rhs, self.y() * rhs, self.z() * rhs],
-        }
+        Vector3::new(self.x() * rhs, self.y() * rhs, self.z() * rhs)
     }
 }
 

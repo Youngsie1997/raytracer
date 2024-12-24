@@ -1,16 +1,15 @@
-pub mod vector3;
 use core::f64;
+use raytracer::vector3::Vector3;
 use std::fs::File;
 use std::io::BufWriter;
 use std::io::Write;
-use vector3::Vector3;
 
 fn main() {
     println!("Racetracer v1");
 
     // Image
-    let image_width: u32 = 4096;
-    let image_height: u32 = 2160;
+    let image_width: u32 = 64;
+    let image_height: u32 = 64;
     let yourvec = Vector3::new(4.0, 5.0, 9.0);
     println!("{yourvec}");
     dbg!(4.0 * yourvec);
@@ -34,8 +33,8 @@ fn main() {
         print!(".");
         for i in 0..image_width {
             let r = i as f64 / (image_width as f64 - 1.0);
-            let g = j as f64 / (image_width as f64 - 1.0);
-            let b = 0.0;
+            let b = j as f64 / (image_width as f64 - 1.0);
+            let g = 0.0;
 
             let ir: u32 = (255.999 * r) as u32;
             let ig: u32 = (255.999 * g) as u32;
