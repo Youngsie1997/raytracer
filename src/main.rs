@@ -33,15 +33,15 @@ fn main() {
         print!(".");
         for i in 0..image_width {
             let r = i as f64 / (image_width as f64 - 1.0);
-            let b = j as f64 / (image_width as f64 - 1.0);
-            let g = 0.0;
+            let g = j as f64 / (image_width as f64 - 1.0);
+            let b = 0.0;
 
-            let ir: u32 = (255.999 * r) as u32;
-            let ig: u32 = (255.999 * g) as u32;
-            let ib: u32 = (255.999 * b) as u32;
+            let r: u32 = (255.999 * r) as u32;
+            let g: u32 = (255.999 * g) as u32;
+            let b: u32 = (255.999 * b) as u32;
 
             let _bytes_written = output_buffer
-                .write(format!("{ir} {ig} {ib}\n").as_bytes())
+                .write(format!("{r} {g} {b}\n").as_bytes())
                 .unwrap();
         }
     }
