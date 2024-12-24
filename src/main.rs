@@ -1,5 +1,6 @@
 use core::f64;
-use raytracer::vector3::Vector3;
+use raytracer::write_colour;
+use raytracer::Colour;
 use std::fs::File;
 use std::io::BufWriter;
 use std::io::Write;
@@ -7,15 +8,9 @@ use std::io::Write;
 fn main() {
     println!("Racetracer v1");
 
-    // Image
+    // Image Dimensions
     let image_width: u32 = 64;
     let image_height: u32 = 64;
-    let yourvec = Vector3::new(4.0, 5.0, 9.0);
-    println!("{yourvec}");
-    dbg!(4.0 * yourvec);
-    dbg!(yourvec * 4.0);
-
-    // Render
 
     // Open file
     let file_name = "output.ppm";
@@ -28,6 +23,7 @@ fn main() {
         .write(format!("P3\n{image_width} {image_height}\n255\n").as_bytes())
         .unwrap();
 
+    // Render image
     print!("Rendering");
     for j in 0..image_height {
         print!(".");
@@ -36,16 +32,9 @@ fn main() {
             let g = j as f64 / (image_width as f64 - 1.0);
             let b = 0.0;
 
-            let r: u32 = (255.999 * r) as u32;
-            let g: u32 = (255.999 * g) as u32;
-            let b: u32 = (255.999 * b) as u32;
-
-            let _bytes_written = output_buffer
-                .write(format!("{r} {g} {b}\n").as_bytes())
-                .unwrap();
+            write_colour(&mut output_buffer, &Colour::new(r, g, b));
         }
     }
     println!("Done!");
-
     output_buffer.flush().expect("could not flush to file");
 }
