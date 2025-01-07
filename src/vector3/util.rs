@@ -11,9 +11,8 @@ impl Display for Vector3 {
 // Dot Product
 
 pub fn dot(u: &Vector3, v: &Vector3) -> f64 {
-    u.x() * v.x() + u.y() * v.y() + u.z() + v.z()
+    u.x() * v.x() + u.y() * v.y() + u.z() * v.z()
 }
-
 // Cross Product
 
 pub fn cross(u: &Vector3, v: &Vector3) -> Vector3 {
