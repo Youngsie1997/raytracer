@@ -8,5 +8,4 @@ pub mod hittable;
 pub mod output;
 pub mod ray;
 pub mod shapes;
-pub mod utils;
 pub mod vector3;

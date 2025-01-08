@@ -1,3 +1,5 @@
+use std::clone;
+
 use crate::{dot, Point3, Ray, Vector3};
 
 #[derive(Clone, Copy, Default)]

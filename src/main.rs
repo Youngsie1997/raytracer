@@ -3,9 +3,14 @@ use raytracer::dot;
 use raytracer::unit_vector;
 use raytracer::write_colour;
 use raytracer::Colour;
+use raytracer::HitRecord;
+use raytracer::Hittable;
+use raytracer::HittableList;
 use raytracer::Point3;
 use raytracer::Ray;
+use raytracer::Sphere;
 use raytracer::Vector3;
+use std::f64::INFINITY;
 use std::fs::File;
 use std::io::BufWriter;
 use std::io::Write;
@@ -13,30 +18,14 @@ use std::io::Write;
 fn main() {
     println!("Racetracer v1");
 
-    fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
-        let oc = center - *r.origin();
-        let a = r.direction().length_squared();
-        let h = dot(r.direction(), &oc);
-        let c = oc.length_squared() - radius * radius;
-        let discriminant = h * h - a * c;
-
-        if discriminant < 0.0 {
-            -1.0
-        } else {
-            (h - f64::sqrt(discriminant)) / a
-        }
-    }
-
-    fn ray_colour(r: &Ray) -> Colour {
-        let t = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, r);
-        if t > 0.0 {
-            let ray_at = r.at(t) - Vector3::new(0.0, 0.0, -1.0);
-            let normal = unit_vector(&ray_at);
-            return 0.5 * Colour::new(normal.x() + 1.0, normal.y() + 1.0, normal.z() + 1.0);
+    fn ray_colour<T: Hittable>(r: &Ray, world: &T) -> Colour {
+        let mut rec = HitRecord::default();
+        if world.hit(r, 0.0, INFINITY, &mut rec) {
+            return 0.5 * (rec.normal + Colour::new(1.0, 1.0, 1.0));
         }
         let unit_direction = unit_vector(r.direction());
         let a = 0.5 * (unit_direction.y() + 1.0);
-        (1.0 - a) * Colour::new(1.0, 1.0, 1.0) + a * Colour::new(0.5, 0.7, 1.0)
+        return (1.0 - a) * Colour::new(1.0, 1.0, 1.0) + a * Colour::new(1.0, 0.7, 1.0);
     }
 
     // Image Dimensions
@@ -50,6 +39,12 @@ fn main() {
     let viewport_height = 2.0;
     let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
     let camera_center = Point3::default();
+
+    // WORLD
+
+    let mut world = HittableList::new();
+    world.add(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5));
+    world.add(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0));
 
     // Calculate vectors accross horizontal and down vertical viewport edges.
     let viewport_u = Vector3::new(viewport_width, 0.0, 0.0);
@@ -84,7 +79,7 @@ fn main() {
                 pixel_origin + (i as f64 * pixel_delta_u) + (j as f64 * pixel_delta_v);
             let ray_direction = pixel_center - camera_center;
             let r = Ray::new(camera_center, ray_direction);
-            let pixel_colour = ray_colour(&r);
+            let pixel_colour = ray_colour(&r, &world);
             write_colour(&mut output_buffer, &pixel_colour);
         }
     }
