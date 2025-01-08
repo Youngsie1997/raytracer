@@ -1,7 +1,6 @@
 use core::f64;
 use raytracer::dot;
 use raytracer::unit_vector;
-use raytracer::vector3;
 use raytracer::write_colour;
 use raytracer::Colour;
 use raytracer::Point3;

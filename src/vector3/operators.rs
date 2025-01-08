@@ -89,3 +89,9 @@ impl ops::Div<f64> for Vector3 {
         (1.0 / rhs) * self
     }
 }
+
+impl PartialEq for Vector3 {
+    fn eq(&self, other: &Self) -> bool {
+        self.x() == other.x() && self.y() == other.y() && self.z() == other.z()
+    }
+}
