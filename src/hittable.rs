@@ -1,5 +1,6 @@
 use crate::{dot, Point3, Ray, Vector3};
 
+#[derive(Clone, Copy, Default)]
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vector3,
@@ -18,7 +19,58 @@ impl HitRecord {
             -*outward_normal
         }
     }
+
+    pub fn new() -> Self {
+        Self::default()
+    }
 }
 pub trait Hittable {
     fn hit(&self, r: &Ray, ray_tmin: f64, ray_tmax: f64, rec: &mut HitRecord) -> bool;
+}
+
+pub struct HittableList {
+    pub objects: Vec<Box<dyn Hittable>>,
+}
+
+impl HittableList {
+    pub fn new() -> Self {
+        Self { objects: vec![] }
+    }
+
+    pub fn add<T: Hittable + 'static>(&mut self, object: T) {
+        self.objects.push(Box::new(object));
+    }
+
+    pub fn build<T: Hittable + 'static>(object: T) -> Self {
+        let mut list = HittableList::new();
+        list.add(object);
+        list
+    }
+
+    pub fn clear(&mut self) {
+        self.objects.clear();
+    }
+}
+
+impl Default for HittableList {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Hittable for HittableList {
+    fn hit(&self, r: &Ray, ray_tmin: f64, ray_tmax: f64, rec: &mut HitRecord) -> bool {
+        let mut temp_rec = HitRecord::new();
+        let mut hit_anything: bool = false;
+        let mut closet_so_far = ray_tmax;
+
+        for object in &self.objects {
+            if object.hit(r, ray_tmin, closet_so_far, &mut temp_rec) {
+                hit_anything = true;
+                closet_so_far = temp_rec.t;
+                *rec = temp_rec;
+            }
+        }
+        hit_anything
+    }
 }

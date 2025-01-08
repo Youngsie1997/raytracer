@@ -1,4 +1,4 @@
-pub use self::hittable::{HitRecord, Hittable};
+pub use self::hittable::{HitRecord, Hittable, HittableList};
 pub use self::output::write_colour;
 pub use self::ray::Ray;
 pub use self::shapes::sphere::Sphere;
@@ -8,4 +8,5 @@ pub mod hittable;
 pub mod output;
 pub mod ray;
 pub mod shapes;
+pub mod utils;
 pub mod vector3;
