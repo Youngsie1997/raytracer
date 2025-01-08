@@ -1,16 +1,15 @@
 use core::f64;
-use raytracer::dot;
 use raytracer::unit_vector;
 use raytracer::write_colour;
 use raytracer::Colour;
 use raytracer::HitRecord;
 use raytracer::Hittable;
 use raytracer::HittableList;
+use raytracer::Interval;
 use raytracer::Point3;
 use raytracer::Ray;
 use raytracer::Sphere;
 use raytracer::Vector3;
-use std::f64::INFINITY;
 use std::fs::File;
 use std::io::BufWriter;
 use std::io::Write;
@@ -20,12 +19,12 @@ fn main() {
 
     fn ray_colour<T: Hittable>(r: &Ray, world: &T) -> Colour {
         let mut rec = HitRecord::default();
-        if world.hit(r, 0.0, INFINITY, &mut rec) {
+        if world.hit(r, Interval::build(0.0, f64::INFINITY), &mut rec) {
             return 0.5 * (rec.normal + Colour::new(1.0, 1.0, 1.0));
         }
         let unit_direction = unit_vector(r.direction());
         let a = 0.5 * (unit_direction.y() + 1.0);
-        return (1.0 - a) * Colour::new(1.0, 1.0, 1.0) + a * Colour::new(1.0, 0.7, 1.0);
+        (1.0 - a) * Colour::new(1.0, 1.0, 1.0) + a * Colour::new(1.0, 0.7, 1.0)
     }
 
     // Image Dimensions
