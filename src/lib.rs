@@ -5,6 +5,7 @@ pub use self::ray::Ray;
 pub use self::shapes::sphere::Sphere;
 pub use self::vector3::util::{cross, dot, unit_vector};
 pub use self::vector3::{Colour, Point3, Vector3};
+pub mod camera;
 pub mod hittable;
 pub mod interval;
 pub mod output;
