@@ -1,9 +1,12 @@
-use crate::{dot, HitRecord, Hittable, Interval, Point3, Ray};
+use std::sync::Arc;
 
-#[derive(Debug, Clone, Copy)]
+use crate::{dot, HitRecord, Hittable, Interval, Material, Point3, Ray};
+
+#[derive(Clone)]
 pub struct Sphere {
     pub center: Point3,
     pub radius: f64,
+    pub mat: Arc<dyn Material>,
 }
 
 impl Sphere {
@@ -14,10 +17,11 @@ impl Sphere {
     /// assert_eq!(s.center, raytracer::Point3::new(1.0, 2.0, 3.0));
     /// assert_eq!(s.radius, 5.0);
     /// ```
-    pub fn new(center: Point3, radius: f64) -> Self {
+    pub fn new(center: Point3, radius: f64, mat: Arc<dyn Material>) -> Self {
         Self {
             center,
             radius: f64::max(radius, 0.0),
+            mat,
         }
     }
 }
@@ -47,7 +51,7 @@ impl Hittable for Sphere {
         rec.p = r.at(rec.t);
         let outward_normal = (rec.p - self.center) / self.radius;
         rec.set_face_normal(r, &outward_normal);
-
+        rec.mat = self.mat.clone();
         true
     }
 }

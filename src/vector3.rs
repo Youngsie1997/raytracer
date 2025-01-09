@@ -1,5 +1,7 @@
 pub mod operators;
 pub mod util;
+use core::f64;
+
 use rand::{thread_rng, Rng};
 use util::dot;
 #[derive(Debug, Clone, Copy)]
@@ -29,6 +31,11 @@ impl Vector3 {
         )
     }
 
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+        (f64::abs(self.e[0]) < s) && (f64::abs(self.e[1]) < s) && (f64::abs(self.e[2]) < s)
+    }
+
     pub fn random_unit() -> Vector3 {
         loop {
             let p = Vector3::random_limit(-1.0, 1.0);
@@ -45,6 +52,10 @@ impl Vector3 {
             return on_unit_sphere;
         }
         -on_unit_sphere
+    }
+
+    pub fn reflect(v: &Vector3, n: &Vector3) -> Vector3 {
+        *v - 2.0 * dot(v, n) * *n
     }
 
     // Getters

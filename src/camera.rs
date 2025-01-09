@@ -45,7 +45,7 @@ impl Camera {
                 let mut pixel_colour = Colour::default();
                 for _ample in 0..self.samples_per_pixel {
                     let r: Ray = self.get_ray(i, j);
-                    pixel_colour += Self::ray_colour(&r, world, self.max_depth);
+                    pixel_colour += self.ray_colour(&r, self.max_depth, world);
                 }
                 let final_colour = self.pixel_samples_scale * pixel_colour;
                 write_colour(&mut output_buffer, &final_colour);
@@ -81,14 +81,19 @@ impl Camera {
         self.pixel_origin = viewport_upper_left + 0.5 * (self.pixel_delta_u + self.pixel_delta_v);
     }
 
-    pub fn ray_colour<T: Hittable>(r: &Ray, world: &T, depth: u32) -> Colour {
+    pub fn ray_colour<T: Hittable>(&self, r: &Ray, depth: u32, world: &T) -> Colour {
         if depth == 0 {
             return Colour::new(0.0, 0.0, 0.0);
         }
         let mut rec = HitRecord::default();
         if world.hit(r, Interval::build(0.001, f64::INFINITY), &mut rec) {
-            let direction = rec.normal + Vector3::random_unit();
-            return 0.4 * Self::ray_colour(&Ray::new(rec.p, direction), world, depth - 1);
+            let mut scattered = Ray::default();
+            let mut attenuation = Vector3::default();
+            if rec.mat.scatter(r, &rec, &mut attenuation, &mut scattered) {
+                return attenuation * self.ray_colour(&scattered, depth - 1, world);
+            } else {
+                return Colour::new(0.0, 0.0, 0.0);
+            }
         }
         let unit_direction = unit_vector(r.direction());
         let a = 0.5 * (unit_direction.y() + 1.0);

@@ -1,6 +1,7 @@
 pub use self::hittable::{HitRecord, Hittable, HittableList};
 pub use self::interval::Interval;
 pub use self::materials::lambertian;
+pub use self::materials::metal;
 pub use self::materials::Material;
 pub use self::output::write_colour;
 pub use self::ray::Ray;
