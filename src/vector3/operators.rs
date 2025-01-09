@@ -62,7 +62,7 @@ impl ops::Mul for Vector3 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Vector3::new(self.x() * rhs.x(), self.y() * self.y(), self.z() * rhs.z())
+        Vector3::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
     }
 }
 
