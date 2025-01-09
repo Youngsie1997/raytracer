@@ -1,11 +1,14 @@
-use crate::{dot, Interval, Point3, Ray, Vector3};
+use std::sync::Arc;
 
-#[derive(Clone, Copy, Default)]
+use crate::{dot, lambertian::Lambertian, Colour, Interval, Material, Point3, Ray, Vector3};
+
+#[derive(Clone)]
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vector3,
     pub t: f64,
     pub front_face: bool,
+    pub mat: Arc<dyn Material>,
 }
 
 impl HitRecord {
@@ -22,6 +25,28 @@ impl HitRecord {
 
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn build(mat: Arc<dyn Material>) -> Self {
+        Self {
+            p: Default::default(),
+            normal: Default::default(),
+            t: Default::default(),
+            front_face: Default::default(),
+            mat,
+        }
+    }
+}
+
+impl Default for HitRecord {
+    fn default() -> Self {
+        Self {
+            p: Default::default(),
+            normal: Default::default(),
+            t: Default::default(),
+            front_face: Default::default(),
+            mat: Arc::new(Lambertian::new(Colour::new(0.0, 0.0, 0.0))),
+        }
     }
 }
 pub trait Hittable {
@@ -68,7 +93,7 @@ impl Hittable for HittableList {
             if object.hit(r, Interval::build(ray_t.min, closet_so_far), &mut temp_rec) {
                 hit_anything = true;
                 closet_so_far = temp_rec.t;
-                *rec = temp_rec;
+                *rec = temp_rec.clone();
             }
         }
         hit_anything

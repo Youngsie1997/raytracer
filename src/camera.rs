@@ -12,6 +12,7 @@ pub struct Camera {
     pub aspect_ratio: f64,
     pub image_width: u32,
     pub samples_per_pixel: u32,
+    pub max_depth: u32,
     image_height: u32,
     center: Point3,
     pixel_origin: Point3,
@@ -42,9 +43,9 @@ impl Camera {
             stdout().flush().unwrap();
             for i in 0..self.image_width {
                 let mut pixel_colour = Colour::default();
-                for sample in 0..self.samples_per_pixel {
+                for _ample in 0..self.samples_per_pixel {
                     let r: Ray = self.get_ray(i, j);
-                    pixel_colour += Self::ray_colour(&r, world);
+                    pixel_colour += Self::ray_colour(&r, world, self.max_depth);
                 }
                 let final_colour = self.pixel_samples_scale * pixel_colour;
                 write_colour(&mut output_buffer, &final_colour);
@@ -80,14 +81,18 @@ impl Camera {
         self.pixel_origin = viewport_upper_left + 0.5 * (self.pixel_delta_u + self.pixel_delta_v);
     }
 
-    pub fn ray_colour<T: Hittable>(r: &Ray, world: &T) -> Colour {
+    pub fn ray_colour<T: Hittable>(r: &Ray, world: &T, depth: u32) -> Colour {
+        if depth == 0 {
+            return Colour::new(0.0, 0.0, 0.0);
+        }
         let mut rec = HitRecord::default();
-        if world.hit(r, Interval::build(0.0, f64::INFINITY), &mut rec) {
-            return 0.5 * (rec.normal + Colour::new(1.0, 1.0, 1.0));
+        if world.hit(r, Interval::build(0.001, f64::INFINITY), &mut rec) {
+            let direction = rec.normal + Vector3::random_unit();
+            return 0.4 * Self::ray_colour(&Ray::new(rec.p, direction), world, depth - 1);
         }
         let unit_direction = unit_vector(r.direction());
         let a = 0.5 * (unit_direction.y() + 1.0);
-        (1.0 - a) * Colour::new(1.0, 1.0, 1.0) + a * Colour::new(1.0, 0.7, 1.0)
+        (1.0 - a) * Colour::new(1.0, 1.0, 1.0) + a * Colour::new(0.5, 0.7, 1.0)
     }
 
     fn get_ray(&self, i: u32, j: u32) -> Ray {
@@ -114,6 +119,7 @@ impl Default for Camera {
             aspect_ratio: 1.0,
             image_width: 100,
             samples_per_pixel: 10,
+            max_depth: 10,
             image_height: Default::default(),
             center: Default::default(),
             pixel_origin: Default::default(),

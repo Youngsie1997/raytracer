@@ -1,5 +1,7 @@
 pub use self::hittable::{HitRecord, Hittable, HittableList};
 pub use self::interval::Interval;
+pub use self::materials::lambertian;
+pub use self::materials::Material;
 pub use self::output::write_colour;
 pub use self::ray::Ray;
 pub use self::shapes::sphere::Sphere;
@@ -8,6 +10,7 @@ pub use self::vector3::{Colour, Point3, Vector3};
 pub mod camera;
 pub mod hittable;
 pub mod interval;
+pub mod materials;
 pub mod output;
 pub mod ray;
 pub mod shapes;
